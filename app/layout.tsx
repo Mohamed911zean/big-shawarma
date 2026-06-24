@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StorefrontProvider } from "./context/storefront-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className="scroll-smooth antialiased">
-      <body>{children}</body>
+      <body>
+        <StorefrontProvider>{children}</StorefrontProvider>
+      </body>
     </html>
   );
 }

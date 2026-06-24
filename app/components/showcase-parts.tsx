@@ -17,13 +17,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
-
-export const branches = [
-  { name: "فرع مدينة نصر", left: "68%", top: "34%", hours: "12 ظهراً - 3 فجراً", address: "شارع الطيران، أمام منطقة المطاعم", phone: "0100 555 9211", area: "شرق القاهرة", delivery: "يغطي مدينة نصر ومصر الجديدة" },
-  { name: "فرع التجمع", left: "37%", top: "48%", hours: "1 ظهراً - 4 فجراً", address: "محور التسعين، بوابة الفود كورت", phone: "0109 442 7788", area: "القاهرة الجديدة", delivery: "يغطي التجمع والرحاب ومدينتي" },
-  { name: "فرع أكتوبر", left: "22%", top: "67%", hours: "11 صباحاً - 2 فجراً", address: "الحصري، بجوار المول الرئيسي", phone: "0112 804 3321", area: "غرب القاهرة", delivery: "يغطي أكتوبر والشيخ زايد" },
-  { name: "فرع المعادي", left: "55%", top: "70%", hours: "12 ظهراً - 2 فجراً", address: "شارع النصر، بجوار محطة البنزين", phone: "0106 771 8822", area: "جنوب القاهرة", delivery: "يغطي المعادي وزهراء المعادي" },
-];
+import { branches } from "../data/storefront";
+import { useStorefront } from "../context/storefront-context";
+import LeafletLocationMap from "./map/dynamic-location-map";
 
 export function AmbientEnergy() {
   const blobs = [
@@ -48,12 +44,14 @@ export function AmbientEnergy() {
 }
 
 export function ShowcaseNav() {
+  const { cartCount } = useStorefront();
   const links = [
     { href: "/", label: "الرئيسية", Icon: Home },
     { href: "/menu", label: "المنيو", Icon: Menu },
     { href: "/branches", label: "الفروع", Icon: MapPin },
     { href: "/checkout", label: "الطلب", Icon: ShoppingCart },
     { href: "/about", label: "الحكاية", Icon: Sparkles },
+    { href: "/orders-demo", label: "طلبات الديمو", Icon: ChefHat },
   ];
 
   return (
@@ -70,9 +68,10 @@ export function ShowcaseNav() {
             </Link>
           ))}
         </div>
-        <Link href="/checkout" className="hidden h-12 items-center gap-2 rounded-bl-[20px] rounded-tr-[20px] bg-[#25D366] px-4 font-black text-black md:flex">
+        <Link href="/checkout" className="relative hidden h-12 items-center gap-2 rounded-bl-[20px] rounded-tr-[20px] bg-[#25D366] px-4 font-black text-black md:flex">
           <ShoppingCart size={21} />
           اطلب الآن
+          <span className="grid h-6 min-w-6 place-items-center rounded-full bg-black px-1 text-xs text-white">{cartCount}</span>
         </Link>
       </div>
     </nav>
@@ -88,7 +87,7 @@ export function PageHero({ eyebrow, title, copy }: { eyebrow: string; title: str
         <p className="mt-6 max-w-2xl text-xl font-bold leading-9 text-[#D1D5DB]">{copy}</p>
       </div>
       <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="relative z-10 mx-auto w-full max-w-sm rounded-bl-[56px] rounded-tr-[56px] border-[4px] border-white bg-[#FFB800] p-5 shadow-[12px_12px_0_#E11D48]">
-        <Image src="/hero-section-cool-img-with-no-bg.png" alt="" width={352} height={299} className="w-full drop-shadow-[12px_14px_0_rgba(0,0,0,0.35)]" />
+        <Image src="/hero-section-cool-img-with-no-bg.png" alt="لفائف شاورما بيج" width={352} height={299} className="w-full drop-shadow-[12px_14px_0_rgba(0,0,0,0.35)]" />
       </motion.div>
     </header>
   );
@@ -104,29 +103,18 @@ export function SectionTitle({ kicker, title }: { kicker: string; title: string 
 }
 
 export function BranchMap() {
-  const [activeBranch, setActiveBranch] = useState(branches[0]);
+  const [activeBranchId, setActiveBranchId] = useState(branches[0].id);
+  const activeBranch = branches.find((branch) => branch.id === activeBranchId) ?? branches[0];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-      <div className="relative min-h-[460px] overflow-hidden rounded-bl-[60px] rounded-tr-[60px] border-[4px] border-white bg-black shadow-[10px_10px_0_#FFB800]">
-        <svg className="absolute inset-0 h-full w-full opacity-90" viewBox="0 0 800 460" aria-hidden="true">
-          <path d="M20 110 C160 20 210 245 360 160 S590 42 780 130" fill="none" stroke="#FFB800" strokeWidth="10" strokeLinecap="round" />
-          <path d="M80 380 C260 265 350 415 520 275 S650 225 770 340" fill="none" stroke="#E11D48" strokeWidth="8" strokeLinecap="round" />
-          <path d="M120 30 L230 430 M500 25 L430 440 M650 60 L90 320" stroke="#ffffff" strokeWidth="2" strokeDasharray="10 14" opacity=".25" />
-          <circle cx="405" cy="235" r="120" fill="none" stroke="#25D366" strokeWidth="2" strokeDasharray="5 10" opacity=".38" />
-        </svg>
-        {branches.map((branch) => (
-          <button
-            key={branch.name}
-            onClick={() => setActiveBranch(branch)}
-            className={`absolute grid h-14 w-14 place-items-center rounded-full border-4 border-black text-black shadow-[0_0_28px_#FFB800] transition hover:scale-110 ${activeBranch.name === branch.name ? "bg-[#E11D48] text-white" : "bg-[#FFB800]"}`}
-            style={{ left: branch.left, top: branch.top }}
-            aria-label={branch.name}
-          >
-            <MapPin />
-          </button>
-        ))}
-      </div>
+      <LeafletLocationMap
+        mode="branches"
+        selectedLocation={null}
+        onLocationChange={() => undefined}
+        selectedBranchId={activeBranchId}
+        onBranchSelect={setActiveBranchId}
+      />
       <div className="rounded-bl-[48px] rounded-tr-[48px] border-[4px] border-white bg-[#FFB800] p-6 text-black shadow-[10px_10px_0_#E11D48]">
         <p className="mb-3 inline-flex rounded-br-[16px] rounded-tl-[16px] bg-black px-4 py-2 text-sm font-black text-[#FFB800]">{activeBranch.area}</p>
         <h3 className="text-4xl font-black">{activeBranch.name}</h3>
@@ -135,7 +123,7 @@ export function BranchMap() {
         <p className="mt-4 flex items-center gap-3 text-lg font-bold"><ChefHat /> {activeBranch.delivery}</p>
         <div className="mt-8 grid gap-3">
           <a href={`tel:${activeBranch.phone}`} className="flex items-center justify-center gap-2 rounded-bl-[22px] rounded-tr-[22px] bg-[#111] px-5 py-4 font-black text-white shadow-[5px_5px_0_#E11D48]"><Phone /> اتصال فوري</a>
-          <button className="flex items-center justify-center gap-2 rounded-bl-[22px] rounded-tr-[22px] bg-[#25D366] px-5 py-4 font-black text-black shadow-[5px_5px_0_#111]"><Bike /> افتح الاتجاهات</button>
+          <a href={`https://www.google.com/maps/search/?api=1&query=${activeBranch.position[0]},${activeBranch.position[1]}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-bl-[22px] rounded-tr-[22px] bg-[#25D366] px-5 py-4 font-black text-black shadow-[5px_5px_0_#111]"><Bike /> افتح الاتجاهات</a>
         </div>
       </div>
     </div>
