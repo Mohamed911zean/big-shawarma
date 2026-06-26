@@ -39,6 +39,9 @@ type StorefrontContextValue = {
   updateAddress: (patch: Partial<AddressDraft>) => void;
   setLocation: (location: LocationPoint | null) => void;
   submitOrder: () => DemoOrder;
+  deleteOrder: (id: string) => void;
+  clearAllOrders: () => void;
+  reorderItems: (orderId: string) => void;
 };
 
 const storageKey = "big-shawerma-storefront-v1";
@@ -79,7 +82,11 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
         setCart(parsed.cart ?? []);
         setWishlist(parsed.wishlist ?? []);
         setOrders(parsed.orders ?? []);
-        setCheckout({ ...defaultCheckout, ...parsed.checkout, address: { ...defaultAddress, ...parsed.checkout?.address } });
+        setCheckout({
+          ...defaultCheckout,
+          ...parsed.checkout,
+          address: { ...defaultAddress, ...parsed.checkout?.address },
+        });
       } catch {
         window.localStorage.removeItem(storageKey);
       }
@@ -89,18 +96,29 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(storageKey, JSON.stringify({ cart, wishlist, orders, checkout }));
+    window.localStorage.setItem(
+      storageKey,
+      JSON.stringify({ cart, wishlist, orders, checkout }),
+    );
   }, [cart, checkout, hydrated, orders, wishlist]);
 
-  const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
-  const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
+  const subtotal = useMemo(
+    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cart],
+  );
+  const cartCount = useMemo(
+    () => cart.reduce((sum, item) => sum + item.quantity, 0),
+    [cart],
+  );
 
   function addToCart(item: MenuItem, options: string[] = []) {
     setCart((current) => {
       const key = lineKey({ id: item.id, options });
       const existing = current.find((line) => lineKey(line) === key);
       if (existing) {
-        return current.map((line) => (lineKey(line) === key ? { ...line, quantity: line.quantity + 1 } : line));
+        return current.map((line) =>
+          lineKey(line) === key ? { ...line, quantity: line.quantity + 1 } : line,
+        );
       }
       return [...current, { ...item, quantity: 1, options }];
     });
@@ -109,7 +127,11 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   function updateQuantity(key: string, delta: number) {
     setCart((current) =>
       current
-        .map((line) => (lineKey(line) === key ? { ...line, quantity: Math.max(0, line.quantity + delta) } : line))
+        .map((line) =>
+          lineKey(line) === key
+            ? { ...line, quantity: Math.max(0, line.quantity + delta) }
+            : line,
+        )
         .filter((line) => line.quantity > 0),
     );
   }
@@ -123,7 +145,11 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   }
 
   function toggleWishlist(item: MenuItem) {
-    setWishlist((current) => (current.some((entry) => entry.id === item.id) ? current.filter((entry) => entry.id !== item.id) : [...current, item]));
+    setWishlist((current) =>
+      current.some((entry) => entry.id === item.id)
+        ? current.filter((entry) => entry.id !== item.id)
+        : [...current, item],
+    );
   }
 
   function updateCheckout(patch: Partial<CheckoutDraft>) {
@@ -131,7 +157,10 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   }
 
   function updateAddress(patch: Partial<AddressDraft>) {
-    setCheckout((current) => ({ ...current, address: { ...current.address, ...patch } }));
+    setCheckout((current) => ({
+      ...current,
+      address: { ...current.address, ...patch },
+    }));
   }
 
   function setLocation(location: LocationPoint | null) {
@@ -139,7 +168,9 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   }
 
   function submitOrder() {
-    const selectedBranch = branches.find((branch) => branch.id === checkout.branchId) as Branch | undefined;
+    const selectedBranch = branches.find(
+      (branch) => branch.id === checkout.branchId,
+    ) as Branch | undefined;
     const order: DemoOrder = {
       id: `BS-${Date.now().toString(36).toUpperCase()}`,
       createdAt: new Date().toISOString(),
@@ -148,7 +179,10 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
       orderType: checkout.orderType,
       paymentMethod: "cash",
       address: checkout.orderType === "delivery" ? checkout.address : undefined,
-      location: checkout.orderType === "delivery" ? checkout.location ?? undefined : undefined,
+      location:
+        checkout.orderType === "delivery"
+          ? checkout.location ?? undefined
+          : undefined,
       branch: checkout.orderType === "pickup" ? selectedBranch : undefined,
       notes: checkout.notes.trim(),
       items: cart,
@@ -156,8 +190,30 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     };
     setOrders((current) => [order, ...current]);
     setCart([]);
-    setCheckout((current) => ({ ...defaultCheckout, name: current.name, phone: current.phone }));
+    setCheckout((current) => ({
+      ...defaultCheckout,
+      name: current.name,
+      phone: current.phone,
+    }));
     return order;
+  }
+
+  function deleteOrder(id: string) {
+    setOrders((current) => current.filter((order) => order.id !== id));
+  }
+
+  function clearAllOrders() {
+    setOrders([]);
+  }
+
+  function reorderItems(orderId: string) {
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return;
+    order.items.forEach((item) => {
+      for (let i = 0; i < item.quantity; i++) {
+        addToCart(item, item.options);
+      }
+    });
   }
 
   const value: StorefrontContextValue = {
@@ -176,9 +232,16 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     updateAddress,
     setLocation,
     submitOrder,
+    deleteOrder,
+    clearAllOrders,
+    reorderItems,
   };
 
-  return <StorefrontContext.Provider value={value}>{children}</StorefrontContext.Provider>;
+  return (
+    <StorefrontContext.Provider value={value}>
+      {children}
+    </StorefrontContext.Provider>
+  );
 }
 
 export function useStorefront() {

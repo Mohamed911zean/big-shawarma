@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-type ToastType = "cart" | "wishlist" | "error" | "success";
+export type ToastType = "cart" | "wishlist" | "error" | "success";
 
 interface Toast {
   id: string;
@@ -28,14 +28,16 @@ const toastStyles: Record<ToastType, string> = {
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastType, emoji?: string) => {
-    const id = Math.random().toString(36).slice(2, 9);
-    setToasts((prev) => {
-      const next = [...prev, { id, message, type, emoji }];
-      if (next.length > 3) return next.slice(-3);
-      return next;
-    });
-  }, []);
+  const showToast = useCallback(
+    (message: string, type: ToastType, emoji?: string) => {
+      const id = Math.random().toString(36).slice(2, 9);
+      setToasts((prev) => {
+        const next = [...prev, { id, message, type, emoji }];
+        return next.length > 3 ? next.slice(-3) : next;
+      });
+    },
+    [],
+  );
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -44,7 +46,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 left-1/2 z-[100] flex -translate-x-1/2 flex-col gap-3 md:left-auto md:right-4 md:translate-x-0">
+      <div className="fixed bottom-4 left-1/2 z-[100] flex w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 flex-col gap-3 md:left-auto md:right-4 md:translate-x-0">
         <AnimatePresence mode="popLayout">
           {toasts.map((toast) => (
             <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
@@ -55,7 +57,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
+function ToastItem({
+  toast,
+  onRemove,
+}: {
+  toast: Toast;
+  onRemove: (id: string) => void;
+}) {
   useEffect(() => {
     const timer = setTimeout(() => onRemove(toast.id), 2500);
     return () => clearTimeout(timer);
@@ -71,7 +79,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       className={`flex items-center gap-3 rounded-bl-[20px] rounded-tr-[20px] border-2 bg-[#111] px-5 py-4 font-black text-white ${toastStyles[toast.type]}`}
     >
       {toast.emoji && <span className="text-lg">{toast.emoji}</span>}
-      <span className="text-sm md:text-base">{toast.message}</span>
+      <span className="text-sm">{toast.message}</span>
     </motion.div>
   );
 }

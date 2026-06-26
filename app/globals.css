@@ -17,11 +17,17 @@
 
 html {
   background: var(--background);
+  scroll-behavior: smooth;
+}
+
+[id] {
+  scroll-margin-top: 80px;
 }
 
 body {
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
   font-family: "Cairo", "Tajawal", "Segoe UI", Arial, sans-serif;
@@ -43,6 +49,18 @@ textarea {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid #ffb800;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  button,
+  a {
+    min-height: 44px;
+  }
 }
 
 ::-webkit-scrollbar {
