@@ -1,9 +1,11 @@
-import { useStorefront } from "@/app/context/storefront-context";
+"use client"
+
 import { AnimatePresence , motion } from "framer-motion";
 import {Minus , Plus , X} from "lucide-react"
 import Link from "next/link"
-import { getCartLineKey } from "@/app/context/storefront-context";
-import {currency} from "../../data/storefront"
+import { getCartLineKey, useStorefront } from "@/context/storefront-context";
+import {currency} from "@/data/storefront"
+import type { CartLine } from "@/data/storefront";
 
 export default function CartDrawer({
   open,
@@ -13,7 +15,7 @@ export default function CartDrawer({
   onQuantity,
 }: {
   open: boolean;
-  cart: ReturnType<typeof useStorefront>["cart"];
+  cart: CartLine[];
   subtotal: number;
   onClose: () => void;
   onQuantity: (lineKey: string, delta: number) => void;
@@ -108,4 +110,30 @@ export default function CartDrawer({
       )}
     </AnimatePresence>
   );
+}
+
+export function GlobalCart({
+  open,
+  onClose,
+  cart,
+  subtotal,
+  updateQuantity,
+}: {
+  open: boolean;
+  onClose: () => void;
+  cart: CartLine[];
+  subtotal: number;
+  updateQuantity: (lineKey: string, delta: number) => void;
+}){
+  return (
+    <>
+     <CartDrawer
+        open={open}
+        cart={cart}
+        subtotal={subtotal}
+        onClose={onClose}
+        onQuantity={updateQuantity}
+      />
+    </>
+  )
 }

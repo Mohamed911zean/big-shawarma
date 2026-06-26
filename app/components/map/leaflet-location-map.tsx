@@ -6,7 +6,7 @@ import L from "leaflet";
 import { LocateFixed, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, TileLayer, Tooltip, useMapEvents } from "react-leaflet";
-import { Branch, LocationPoint, branches } from "../../data/storefront";
+import { Branch, LocationPoint, branches } from "@/data/storefront";
 
 type LocationMapProps = {
   selectedLocation: LocationPoint | null;

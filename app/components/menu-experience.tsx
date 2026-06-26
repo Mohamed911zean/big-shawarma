@@ -5,16 +5,15 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Minus, Plus, Search, ShoppingCart, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getCartLineKey, useStorefront } from "../context/storefront-context";
+import { useStorefront } from "@/context/storefront-context";
 import { useToast } from "./ui/toast-provider";
-import { MenuItem, currency, menuGroups, menuItems } from "../data/storefront";
-import CartDrawer from "../components/layout/cartDrawer"
+import { MenuItem, currency, menuGroups, menuItems } from "@/data/storefront";
 
 const modifications = ["تومية إكسترا", "جبنة سايحة", "نسخة حارة"];
 
 export default function MenuExperience({ compact = false }: { compact?: boolean }) {
   const categories = menuGroups.map((group) => group.category);
-  const { cart, wishlist, cartCount, subtotal, addToCart, updateQuantity, toggleWishlist } =
+  const { wishlist, cartCount, subtotal, addToCart, openCartDrawer, toggleWishlist } =
     useStorefront();
   const { showToast } = useToast();
 
@@ -22,7 +21,6 @@ export default function MenuExperience({ compact = false }: { compact?: boolean 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(["تومية إكسترا"]);
-  const [cartOpen, setCartOpen] = useState(false);
 
   // Compact mode: 2 items from first 3 categories only
   const compactItems = useMemo(
@@ -88,7 +86,7 @@ export default function MenuExperience({ compact = false }: { compact?: boolean 
             </div>
             <button
               type="button"
-              onClick={() => setCartOpen(true)}
+              onClick={openCartDrawer}
               className="relative flex shrink-0 items-center gap-2 rounded-bl-[24px] rounded-tr-[24px] bg-[#25D366] px-5 py-4 font-black text-black shadow-[5px_5px_0_#FFB800]"
             >
               <ShoppingCart />
@@ -186,15 +184,8 @@ export default function MenuExperience({ compact = false }: { compact?: boolean 
         onAdd={(item) => {
           handleAddToCart(item, selectedOptions);
           setSelectedItem(null);
-          setCartOpen(true);
+          openCartDrawer();
         }}
-      />
-      <CartDrawer
-        open={cartOpen}
-        cart={cart}
-        subtotal={subtotal}
-        onClose={() => setCartOpen(false)}
-        onQuantity={updateQuantity}
       />
     </section>
   );

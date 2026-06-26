@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { useStorefront } from "../../context/storefront-context";
+import { useStorefront } from "@/context/storefront-context";
 import Image from "next/image";
 import {
     Home,
@@ -10,13 +10,9 @@ import {
     ShoppingCart,
     Sparkles,
 } from "lucide-react"
-import { useState } from "react";
-import CartDrawer from "./cartDrawer";
 
 export default function Navbar() {
-const { cart, wishlist, cartCount, subtotal, addToCart, updateQuantity, toggleWishlist } =
-    useStorefront();
-   const [cartOpen , setCartOpen] = useState(false)
+const { cartCount, openCartDrawer } = useStorefront();
   const links = [
     { href: "/", label: "الرئيسية", Icon: Home },
     { href: "/menu", label: "المنيو", Icon: Menu },
@@ -40,7 +36,7 @@ const { cart, wishlist, cartCount, subtotal, addToCart, updateQuantity, toggleWi
         </div>
         <button
               type="button"
-              onClick={() => setCartOpen(true)}
+              onClick={openCartDrawer}
               className="relative flex shrink-0 items-center gap-2 rounded-bl-[24px] rounded-tr-[24px] bg-[#25D366] px-5 py-4 font-black text-black shadow-[5px_5px_0_#FFB800]"
             >
               <ShoppingCart />
@@ -50,15 +46,6 @@ const { cart, wishlist, cartCount, subtotal, addToCart, updateQuantity, toggleWi
               </span>
             </button>
       </div>
-
-
-      <CartDrawer
-  open={cartOpen}
-  cart={cart}
-  subtotal={subtotal}
-  onClose={() => setCartOpen(false)}
-  onQuantity={updateQuantity}
-/>
     </nav>
   );
 }

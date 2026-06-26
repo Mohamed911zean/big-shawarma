@@ -6,10 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, MapPin, Minus, Plus, ShoppingBag, Store, Truck, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AmbientEnergy } from "../components/layout/ambient-energy";
-import { ShowcaseNav } from "../components/layout/showcase-nav";
 import LeafletLocationMap from "../components/map/dynamic-location-map";
-import { getCartLineKey, useStorefront } from "../context/storefront-context";
-import { addressBook, branches, currency } from "../data/storefront";
+import { getCartLineKey, useStorefront } from "@/context/storefront-context";
+import { addressBook, branches, currency } from "@/data/storefront";
 
 type Step = 1 | 2 | 3;
 
@@ -80,7 +79,6 @@ export default function CheckoutPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] pb-32 text-white">
       <AmbientEnergy />
-      <ShowcaseNav />
 
       <div className="relative z-10 mx-auto max-w-4xl px-5 pt-32 md:px-8">
         {/* Page heading */}

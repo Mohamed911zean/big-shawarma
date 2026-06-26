@@ -17,8 +17,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
-import { branches } from "../data/storefront";
-import { useStorefront } from "../context/storefront-context";
+import { branches } from "@/data/storefront";
+import { useStorefront } from "@/context/storefront-context";
 import LeafletLocationMap from "./map/dynamic-location-map";
 
 export function AmbientEnergy() {
