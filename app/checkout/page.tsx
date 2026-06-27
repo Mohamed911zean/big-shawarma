@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight, MapPin, Minus, Plus, ShoppingBag, Store, Truck, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { AmbientEnergy } from "../components/layout/ambient-energy";
-import LeafletLocationMap from "../components/map/dynamic-location-map";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import LeafletLocationMap from "@/components/map/dynamic-location-map";
 import { getCartLineKey, useStorefront } from "@/context/storefront-context";
 import { addressBook, branches, currency } from "@/data/storefront";
 

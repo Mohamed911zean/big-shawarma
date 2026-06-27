@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Flame, MapPin, Menu, ShoppingCart, Star } from "lucide-react";
-import { AmbientEnergy } from "./components/layout/ambient-energy";
-import { SectionTitle } from "./components/layout/section-title";
-import MenuExperience from "./components/menu-experience";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import { SectionTitle } from "@/components/layout/section-title";
+import MenuExperience from "@/components/menu/menu-experience";
 import { useStorefront } from "@/context/storefront-context";
 import { currency, menuItems, branches } from "@/data/storefront";
-import Navbar from "./components/layout/navbar";
+import Navbar from "@/components/layout/navbar";
 
 const bestsellerIds = ["sh2", "m6", "tr4"];
 

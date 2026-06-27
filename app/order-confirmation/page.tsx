@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle, ClipboardList, Menu } from "lucide-react";
 import { Suspense } from "react";
-import { useStorefront } from "../context/storefront-context";
+import { useStorefront } from "@/context/storefront-context";
 
 function ConfirmationContent() {
   const params = useSearchParams();

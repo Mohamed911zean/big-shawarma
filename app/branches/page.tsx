@@ -1,4 +1,8 @@
-import { AmbientEnergy, BranchMap, FavoriteStrip, PageHero, ShowcaseNav } from "../components/showcase-parts";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import { PageHero } from "@/components/layout/page-hero";
+import Navbar from "@/components/layout/navbar";
+import { BranchMap } from "@/components/ui/branch-map";
+import { FavoriteStrip } from "@/components/ui/favorite-strip";
 
 export const metadata = {
   title: "الفروع | Big Shawerma",
@@ -9,7 +13,7 @@ export default function BranchesPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <ShowcaseNav />
+      <Navbar />
       <PageHero
         eyebrow="فروع شغالة بإيقاع سريع"
         title="اختار أقرب نقطة وانطلق على ريحة الشاورما"

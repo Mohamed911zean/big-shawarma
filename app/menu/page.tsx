@@ -1,6 +1,7 @@
-import { AmbientEnergy, PageHero  } from "../components/showcase-parts";
-import Navbar from "../components/layout/navbar"
-import MenuExperience from "../components/menu-experience";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import { PageHero } from "@/components/layout/page-hero";
+import Navbar from "@/components/layout/navbar";
+import MenuExperience from "@/components/menu/menu-experience";
 
 export const metadata = {
   title: "المنيو | Big Shawerma",

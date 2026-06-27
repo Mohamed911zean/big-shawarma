@@ -1,5 +1,7 @@
 import { Flame, LucideIcon, Sparkles, Store } from "lucide-react";
-import { AmbientEnergy, PageHero, ShowcaseNav } from "../components/showcase-parts";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import { PageHero } from "@/components/layout/page-hero";
+import Navbar from "@/components/layout/navbar";
 
 const timeline = [
   { year: "2018", title: "بداية بصوت عالي", copy: "عربة صغيرة، لفائف كبيرة، وصف انتظار يثبت أن الخلطة مختلفة." },
@@ -23,7 +25,7 @@ export default function AboutPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <ShowcaseNav />
+      <Navbar />
       <PageHero
         eyebrow="حكاية بيج"
         title="من سيخ مشتعل إلى علامة شارع لا تهدأ"

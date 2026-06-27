@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Plus, ShoppingBag } from "lucide-react";
-import { AmbientEnergy } from "../components/layout/ambient-energy";
-import { ShowcaseNav } from "../components/layout/showcase-nav";
-import { useStorefront } from "../context/storefront-context";
-import { useToast } from "../components/ui/toast-provider";
-import { currency } from "../data/storefront";
+import { AmbientEnergy } from "@/components/layout/ambient-energy";
+import Navbar from "@/components/layout/navbar";
+import { useStorefront } from "@/context/storefront-context";
+import { useToast } from "@/components/ui/toast-provider";
+import { currency } from "@/data/storefront";
 
 export default function WishlistPage() {
   const { wishlist, addToCart, toggleWishlist } = useStorefront();
@@ -27,7 +27,7 @@ export default function WishlistPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <ShowcaseNav />
+      <Navbar />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pt-32 pb-24 md:px-8">
         {/* Header */}

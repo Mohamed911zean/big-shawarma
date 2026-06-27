@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { StorefrontProvider } from "@/context/storefront-context";
-import { ToastProvider } from "./components/ui/toast-provider";
-import {GlobalCart}  from "./components/layout/cartDrawer";
+import { ToastProvider } from "@/components/ui/toast-provider";
+import { GlobalCart } from "@/components/layout/cartDrawer";
 import "./globals.css";
-import Navbar from "./components/layout/navbar"
+import Navbar from "@/components/layout/navbar"
 
 export const metadata: Metadata = {
   title: "Big Shawerma | أكبر من مجرد شاورما",
