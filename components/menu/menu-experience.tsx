@@ -23,10 +23,7 @@ import { ProductModal } from "./product-modal";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-const carouselItems: MenuItem[] = groupedMenu
-  .slice(0, 4)
-  .flatMap((g) => g.items.slice(0, 3))
-  .slice(0, 10);
+const carouselItems: MenuItem[] = menuItems.slice(0, 10);
 
 // ── Card component مستقل عشان نعيد استخدامه في الـ slide ──
 function CarouselCard({

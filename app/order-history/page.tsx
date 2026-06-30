@@ -34,8 +34,11 @@ export default function OrderHistoryPage() {
   }
 
   function handleReorder(orderId: string) {
-    reorderItems(orderId);
-    showToast("تمت إضافة الطلب للسلة — أكمل الطلب!", "success", "✓");
+    const order = orders.find((o) => o.id === orderId);
+    if (order) {
+      reorderItems(order.items);
+      showToast("تمت إضافة الطلب للسلة — أكمل الطلب!", "success", "✓");
+    }
   }
 
   return (

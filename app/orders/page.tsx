@@ -256,8 +256,8 @@ export default function OrdersPage() {
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 pb-24 pt-32">
         <SectionTitle
-          title="طلباتي"
-          subtitle="تابع حالة طلباتك الحالية والسابقة"
+          title="تابع حالة طلباتك الحالية والسابقة"
+          kicker="طلباتي"
         />
 
         {orders.length === 0 ? (
