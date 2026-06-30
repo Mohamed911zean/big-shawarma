@@ -16,9 +16,9 @@ import React from "react";
 const bestsellerIds = ["sh2", "m6", "tr4"];
 
 const stats = [
-  { label: "سنوات خبرة", value: "٦" },
-  { label: "فروع", value: "٤" },
-  { label: "صنف في المنيو", value: "٣٦" },
+  { label: "سنوات خبرة", value: "3" },
+  { label: "فروع", value: "2" },
+  { label: "صنف في المنيو", value: "40" },
 ];
 
 export default function Home() {
@@ -30,7 +30,6 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <Navbar />
 
       {/* ─── Hero ─────────────────────────────────────────────────────── */}
       <section
@@ -171,6 +170,7 @@ export default function Home() {
 
       {/* ─── Branches strip ───────────────────────────────────────────── */}
      <div className="flex flex-col items-center gap-4 md:flex-row md:justify-center">
+      <h1 className="max-w-3xl text-balance text-6xl font-black leading-[0.95] text-white sm:text-7xl lg:text-8xl mt-10 mb-10">فروعنا </h1>
   {branches.map((branch, index) => (
     <React.Fragment key={branch.id}>
       <div className="w-full max-w-sm rounded-bl-[28px] rounded-tr-[28px] border border-white/15 bg-white/5 p-5">

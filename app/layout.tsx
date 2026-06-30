@@ -28,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
             <BottomNav />
             <GlobalCart />
-            <FloatingChatbot />
             <FloatingRandomizer />
           </ToastProvider>
         </StorefrontProvider>
