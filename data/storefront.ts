@@ -1,10 +1,18 @@
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+// في storefront.ts — غير الـ MenuItem type
 export type MenuItem = {
   id: string;
   category: string;
   name: string;
   price: number;
   description: string;
+  image?: string;           // ← زود السطر ده
+  isPopular?: boolean;
+  tag?: "جديد" | "الأكثر طلباً" | "عرض محدود";
+  estimatedMinutes?: number;
 };
+
 
 export type Branch = {
   id: string;
@@ -36,6 +44,15 @@ export type LocationPoint = {
 
 export type OrderType = "delivery" | "pickup";
 
+export type OrderStatus =
+  | "new"
+  | "confirmed"
+  | "preparing"
+  | "ready"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled";
+
 export type CartLine = MenuItem & {
   quantity: number;
   options: string[];
@@ -44,7 +61,7 @@ export type CartLine = MenuItem & {
 export type DemoOrder = {
   id: string;
   createdAt: string;
-  status: "new";
+  status: OrderStatus;
   customer: {
     name: string;
     phone: string;
@@ -57,140 +74,138 @@ export type DemoOrder = {
   notes: string;
   items: CartLine[];
   subtotal: number;
+  deliveryFee: number;
+  total: number;
+  estimatedMinutes?: number;
 };
 
-const groupedMenu = [
+// ─── Order Status Config ──────────────────────────────────────────────────────
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  new: "طلب جديد",
+  confirmed: "تم التأكيد",
+  preparing: "جاري التحضير",
+  ready: "الطلب جاهز",
+  out_for_delivery: "في الطريق إليك",
+  delivered: "تم التسليم",
+  cancelled: "ملغي",
+};
+
+export const ORDER_STATUS_ICONS: Record<OrderStatus, string> = {
+  new: "🧾",
+  confirmed: "✅",
+  preparing: "👨‍🍳",
+  ready: "📦",
+  out_for_delivery: "🛵",
+  delivered: "🎉",
+  cancelled: "❌",
+};
+
+export const ORDER_STATUS_FLOW: OrderStatus[] = [
+  "new",
+  "confirmed",
+  "preparing",
+  "ready",
+  "out_for_delivery",
+  "delivered",
+];
+
+export const DELIVERY_FEE = 25;
+
+// ─── Menu Data ────────────────────────────────────────────────────────────────
+
+export const groupedMenu = [
   {
     category: "قسم الشاورما السندوتشات",
     items: [
-      { id: "sh1", name: "شاورما مع بطاطس - دجاج", price: 100, description: "ساندوتش شاورما دجاج مميز يقدم مع البطاطس المقرمشة والتومية." },
-      { id: "sh2", name: "بيج شاورما عيش تنور - دجاج", price: 110, description: "قطع شاورما الدجاج المتبلة بداخل خبز التنور الساخن الفريد." },
-      { id: "sh3", name: "بيج شاورما عيش تنور - لحم", price: 140, description: "لحم بلدي فاخر بخلطة بيج الخاصة بداخل خبز التنور." },
-      { id: "sh4", name: "شاورما عيش سوري - دجاج", price: 75, description: "الكساء السوري التقليدي المحشو بالشاورما والتومية والمخلل." },
-      { id: "sh5", name: "شاورما عيش سوري - لحم", price: 110, description: "قطع لحم الشاورما مع الطحينة والمخلل في خبز سوري مقرمش." },
-      { id: "sh6", name: "شاورما عيش فينو بيج - دجاج", price: 110, description: "ساندوتش فينو عائلي محشو بالدجاج الغني والصوص الخاص." },
-      { id: "sh7", name: "شاورما عيش فينو بيج - لحم", price: 150, description: "ساندوتش فينو حجم ملكي محشو بالشاورما اللحم والخلطة الفاخرة." },
-      { id: "sh8", name: "كايزر بيج 12 إنش - دجاج", price: 90, description: "خبز كايزر دائري عملاق 12 إنش محشو بقطع الدجاج الوفيرة." },
-      { id: "sh9", name: "كايزر بيج 12 إنش - لحم", price: 120, description: "خبز كايزر عملاق 12 إنش مليء بشاورما اللحم وطعم لا ينسى." },
+      { id: "sh1", name: "شاورما مع بطاطس - دجاج", price: 100, description: "ساندوتش شاورما دجاج مميز يقدم مع البطاطس المقرمشة والتومية.", estimatedMinutes: 15 },
+      { id: "sh2", name: "بيج شاورما عيش تنور - دجاج", price: 110, description: "قطع شاورما الدجاج المتبلة بداخل خبز التنور الساخن الفريد.", isPopular: true, tag: "الأكثر طلباً" as const, estimatedMinutes: 15 },
+      { id: "sh3", name: "بيج شاورما عيش تنور - لحم", price: 140, description: "لحم بلدي فاخر بخلطة بيج الخاصة بداخل خبز التنور.", estimatedMinutes: 18 },
+      { id: "sh4", name: "شاورما عيش سوري - دجاج", price: 75, description: "الكساء السوري التقليدي المحشو بالشاورما والتومية والمخلل.", estimatedMinutes: 12 },
+      { id: "sh5", name: "شاورما عيش سوري - لحم", price: 110, description: "قطع لحم الشاورما مع الطحينة والمخلل في خبز سوري مقرمش.", estimatedMinutes: 15 },
+      { id: "sh6", name: "شاورما عيش فينو بيج - دجاج", price: 110, description: "ساندوتش فينو عائلي محشو بالدجاج الغني والصوص الخاص.", estimatedMinutes: 15 },
+      { id: "sh7", name: "شاورما عيش فينو بيج - لحم", price: 150, description: "ساندوتش فينو حجم ملكي محشو بالشاورما اللحم والخلطة الفاخرة.", estimatedMinutes: 18 },
+      { id: "sh8", name: "كايزر بيج 12 إنش - دجاج", price: 90, description: "خبز كايزر دائري عملاق 12 إنش محشو بقطع الدجاج الوفيرة.", estimatedMinutes: 15 },
+      { id: "sh9", name: "كايزر بيج 12 إنش - لحم", price: 120, description: "خبز كايزر عملاق 12 إنش مليء بشاورما اللحم وطعم لا ينسى.", estimatedMinutes: 18 },
     ],
   },
   {
     category: "الوجبات الكاملة والفتة",
     items: [
-      { id: "m1", name: "وجبة شاورما تنور - دجاج", price: 185, description: "تقدم مع الأرز الأصفر، البطاطس، التومية، والمخلل المقرمش." },
-      { id: "m2", name: "وجبة شاورما تنور - لحم", price: 230, description: "تقدم مع الأرز، البطاطس، الطحينة، والمخلل." },
-      { id: "m3", name: "وجبة شاورما تنور - ميكس", price: 195, description: "توليفة رائعة من شاورما الدجاج واللحم مع كامل ملحقات الوجبة." },
-      { id: "m4", name: "وجبة ماريا إكسترا - دجاج", price: 180, description: "خبز الماريا المحشو بالدجاج والجبنة الذائبة والمحمص على الفحم." },
-      { id: "m5", name: "وجبة ماريا إكسترا - لحم", price: 240, description: "خبز الماريا المحشو باللحم والجبن الغني المشوي بعناية." },
-      { id: "m6", name: "فتة شاورما - دجاج", price: 125, description: "طبق الفتة الشهير بقطع الدجاج المقرمش والأرز وصوص التومية الغني." },
-      { id: "m7", name: "فتة شاورما - لحم", price: 155, description: "طبق فتة اللحم مع الأرز والعيش المحمص وصوص الطحينة المميز." },
-      { id: "m8", name: "كيلو شاورما دجاج كامل", price: 700, description: "كمية صافية من شاورما الدجاج مع علب الثومية والمخلل والخبز." },
-      { id: "m9", name: "كيلو شاورما لحم كامل", price: 1015, description: "كيلو كامل من اللحم الصافي المجهز للتقديم المباشر مع الملحقات الحارة." },
+      { id: "m1", name: "وجبة شاورما تنور - دجاج", price: 185, description: "تقدم مع الأرز الأصفر، البطاطس، التومية، والمخلل المقرمش.", estimatedMinutes: 20 },
+      { id: "m2", name: "وجبة شاورما تنور - لحم", price: 230, description: "تقدم مع الأرز، البطاطس، الطحينة، والمخلل.", estimatedMinutes: 22 },
+      { id: "m3", name: "وجبة شاورما تنور - ميكس", price: 195, description: "توليفة رائعة من شاورما الدجاج واللحم مع كامل ملحقات الوجبة.", isPopular: true, tag: "الأكثر طلباً" as const, estimatedMinutes: 22 },
+      { id: "m4", name: "وجبة ماريا إكسترا - دجاج", price: 180, description: "خبز الماريا المحشو بالدجاج والجبنة الذائبة والمحمص على الفحم.", estimatedMinutes: 20 },
+      { id: "m5", name: "وجبة ماريا إكسترا - لحم", price: 220, description: "تشكيلة مميزة من شاورما اللحم مع الجبنة والخبز الهش.", estimatedMinutes: 22 },
+      { id: "m6", name: "فتة شاورما دجاج", price: 160, description: "فتة بالطحينة الكريمية فوقها قطع شاورما الدجاج والمكسرات.", isPopular: true, estimatedMinutes: 18 },
+      { id: "m7", name: "فتة شاورما لحم", price: 200, description: "الفتة الفاخرة بقطع اللحم الطرية والتوابل الأصيلة.", estimatedMinutes: 20 },
     ],
   },
   {
-    category: "قسم البيتزا الفاخرة",
+    category: "التتبيلات والمشاوي",
     items: [
-      { id: "pz1", name: "بيتزا مارجريتّا عائلية", price: 225, description: "صوص الطماطم الإيطالي الغني مع طبقات مكثفة من جبن الموتزاريلا النقي." },
-      { id: "pz2", name: "بيتزا شاورما فراخ - كبير", price: 255, description: "موتزاريلا، صوص خاص، محشوة بقطع شاورما الدجاج العريقة." },
-      { id: "pz3", name: "بيتزا شاورما لحمة - كبير", price: 310, description: "عجينة إيطالية هشة مغطاة بشاورما اللحم والجبن الشيدر والموتزاريلا." },
-      { id: "pz4", name: "بيتزا سجق بلدي - كبير", price: 250, description: "قطع السجق البلدي المتبل مع الخضروات الطازجة والموتزاريلا." },
-      { id: "pz5", name: "بيتزا رانش دجاج - كبير", price: 250, description: "قطع الدجاج مع صوص الرانش الأبيض الغني والزيتون الأسود." },
+      { id: "tr1", name: "تتبيلة دجاج كاملة", price: 320, description: "دجاجة كاملة مشوية على التتبيلة الخاصة ببيج شاورما.", estimatedMinutes: 30 },
+      { id: "tr2", name: "نص تتبيلة دجاج", price: 170, description: "نصف دجاجة مشوية بالطريقة التقليدية مع الصوص الخاص.", estimatedMinutes: 25 },
+      { id: "tr3", name: "ربع تتبيلة دجاج", price: 95, description: "ربع دجاجة مشوي طازج مع الطحينة والليمون.", estimatedMinutes: 20 },
+      { id: "tr4", name: "كفتة مشوية", price: 140, description: "أصابع الكفتة المشوية على الفحم بتوابل بيج المميزة.", isPopular: true, tag: "جديد" as const, estimatedMinutes: 20 },
+      { id: "tr5", name: "مشكل مشاوي للاثنين", price: 380, description: "طبق مشاوي مشكلة للاثنين، دجاج ولحم مع الملحقات الكاملة.", estimatedMinutes: 35 },
     ],
   },
   {
-    category: "قسم الصواني والولائم",
+    category: "الإضافات والمقبلات",
     items: [
-      { id: "tr1", name: "صينية الشامي (تكفي 4 أفراد)", price: 1350, description: "ربع كيلو كفتة، نصف كيلو كباب، ربع شيش طاووق، فرخة كاملة، 2 كيلو أرز، سلطات ومخللات." },
-      { id: "tr2", name: "صينية الأكيلة (تكفي 8 أفراد)", price: 2550, description: "نصف كيلو كباب، كيلو كفتة كامل، كيلو شيش طاووق، فرختين على الفحم، أرز عائلي ضخم، سلطات مشكلة." },
-      { id: "tr3", name: "صينية بيج العملاقة (تكفي 12 فرد)", price: 3800, description: "نصف كيلو ريش، كيلو كفتة، كيلو شيش، فرختين، نصف كيلو كباب، أرز بسمتي مكثف، و12 طبق سلطة فرعي." },
-      { id: "tr4", name: "صينية أنا وأنت (مشاركة لفردين)", price: 800, description: "نصف فرخة، سيخ كفتة، سيخ شقف، سيخ شيش طاووق، سيخ كفتة فراخ، تقدم مع الأرز والسلطة." },
+      { id: "s1", name: "بطاطس عادية", price: 35, description: "بطاطس مقرمشة مقلية طازجة.", estimatedMinutes: 10 },
+      { id: "s2", name: "بطاطس إكسترا لارج", price: 55, description: "بطاطس بحجم إكسترا لارج للجوع الكبير.", estimatedMinutes: 10 },
+      { id: "s3", name: "سلطة خضراء", price: 40, description: "سلطة خضراء طازجة مع عصير الليمون والزيت.", estimatedMinutes: 5 },
+      { id: "s4", name: "تومية إضافية", price: 15, description: "تومية كريمية ناعمة مصنوعة يومياً.", estimatedMinutes: 3 },
+      { id: "s5", name: "طحينة إضافية", price: 15, description: "طحينة طبيعية بالليمون والثوم.", estimatedMinutes: 3 },
+      { id: "s6", name: "مخلل مشكل", price: 20, description: "مخلل مشكل محلي طازج.", estimatedMinutes: 3 },
+      { id: "s7", name: "جبنة إضافية", price: 25, description: "جبنة موزاريلا ذائبة.", estimatedMinutes: 5 },
+      { id: "s8", name: "أرز أصفر", price: 30, description: "أرز أصفر بالكركم والتوابل.", estimatedMinutes: 8 },
     ],
   },
   {
-    category: "قسم المشويات والمدخن",
+    category: "المشروبات",
     items: [
-      { id: "gr1", name: "فرخة كاملة على الفحم مع الأرز", price: 380, description: "دجاجة متبلة وممشوقة على الفحم تقدم ساخنة مع الأرز الأصفر العريض." },
-      { id: "gr2", name: "طاجن سجق بلدي بدبس الرمان", price: 240, description: "طاجن فخاري أصيل مطهو بداخل الفرن مع صوص دبس الرمان الحامض والحلو." },
-      { id: "gr3", name: "كتف ضاني مدخن أسطوري", price: 1245, description: "كتف ضاني مدخن ببطء شديد يذوب بالفم، يقدم مع الأرز الفاخر والمكسرات وصوص الدقوس." },
-      { id: "gr4", name: "وجبة كفتة مشوية على الفحم", price: 215, description: "أصابع الكفتة المتبلة بالبقدونس والبهارات الشرقية مع الأرز والسلطات." },
+      { id: "d1", name: "مياه معدنية", price: 10, description: "زجاجة مياه معدنية 500 مل.", estimatedMinutes: 1 },
+      { id: "d2", name: "مشروب غازي", price: 20, description: "مشروب غازي بالاختيار من المتوفر.", estimatedMinutes: 1 },
+      { id: "d3", name: "عصير طازج", price: 35, description: "عصير فاكهة طازجة موسمية.", estimatedMinutes: 5 },
+      { id: "d4", name: "ليمون بالنعناع", price: 30, description: "ليمون طازج مع النعناع والسكر.", estimatedMinutes: 5 },
     ],
   },
-  {
-    category: "المعجنات والمناقيش",
-    items: [
-      { id: "mn1", name: "لحمة على عجين تقليدية", price: 50, description: "العجين الرقيق المغطى باللحم المفروم المتبل بدقة بالطريقة الشامية." },
-      { id: "mn2", name: "منقوشة جبنة موتزاريلا سايحة", price: 120, description: "طبقة غنية جداً من الجبن الموتزاريلا الفاخر المحمص داخل الفرن." },
-      { id: "mn3", name: "حواوشي بيج إكسترا بلدي", price: 130, description: "رغيف بلدي محشو باللحم المفروم الحار والبهارات القوية ومحمص بالزبدة." },
-    ],
-  },
-];
+] as const;
 
-export const menuGroups = groupedMenu.map((group) => ({
-  category: group.category,
-  items: group.items.map((item) => ({ ...item, category: group.category })),
-}));
+export const menuItems: MenuItem[] = groupedMenu.flatMap((g) =>
+  g.items.map((item) => ({ ...item, category: g.category }))
+);
 
-export const menuItems: MenuItem[] = menuGroups.flatMap((group) => group.items);
+export const categories = groupedMenu.map((g) => g.category);
+
+// ─── Branches ─────────────────────────────────────────────────────────────────
 
 export const branches: Branch[] = [
   {
-    id: "nasr-city",
-    name: "فرع مدينة نصر",
-    area: "شرق القاهرة",
-    address: "شارع الطيران، أمام منطقة المطاعم",
-    phone: "0100 555 9211",
-    hours: "12 ظهراً - 3 فجراً",
-    delivery: "يغطي مدينة نصر ومصر الجديدة",
-    position: [30.0588, 31.3302],
+    id: "b1",
+    name: "فرع شربين",
+    area: "شربين",
+    address: "شارع الجيش، بجوار سنترال شربين",
+    phone: "01080644406",
+    hours: "10 ص - 2 ص",
+    delivery: "30-45 دقيقة",
+    position: [31.1994, 31.5556],
   },
   {
-    id: "tagamoa",
-    name: "فرع التجمع",
-    area: "القاهرة الجديدة",
-    address: "محور التسعين، بوابة الفود كورت",
-    phone: "0109 442 7788",
-    hours: "1 ظهراً - 4 فجراً",
-    delivery: "يغطي التجمع والرحاب ومدينتي",
-    position: [30.0217, 31.4997],
-  },
-  {
-    id: "october",
-    name: "فرع أكتوبر",
-    area: "غرب القاهرة",
-    address: "الحصري، بجوار المول الرئيسي",
-    phone: "0112 804 3321",
-    hours: "11 صباحاً - 2 فجراً",
-    delivery: "يغطي أكتوبر والشيخ زايد",
-    position: [29.9668, 30.9469],
-  },
-  {
-    id: "maadi",
-    name: "فرع المعادي",
-    area: "جنوب القاهرة",
-    address: "شارع النصر، بجوار محطة البنزين",
-    phone: "0106 771 8822",
-    hours: "12 ظهراً - 2 فجراً",
-    delivery: "يغطي المعادي وزهراء المعادي",
-    position: [29.9602, 31.2569],
+    id: "b2",
+    name: "فرع بلقاس",
+    area: "بلقاس",
+    address: "شارع الحرية، أبو رجيله، أمام المحكمة",
+    phone: "01090706444",
+    hours: "10 ص - 2 ص",
+    delivery: "30-45 دقيقة",
+    position: [31.1584, 31.558],
   },
 ];
-
-export const addressBook = {
-  القاهرة: {
-    "مدينة نصر": ["الحي السابع", "عباس العقاد", "مصطفى النحاس", "شارع الطيران"],
-    "مصر الجديدة": ["الكوربة", "روكسي", "النزهة", "أرض الجولف"],
-    المعادي: ["دجلة", "زهراء المعادي", "شارع النصر", "حدائق المعادي"],
-  },
-  الجيزة: {
-    "أكتوبر": ["الحصري", "الحي الأول", "الحي السابع", "مول العرب"],
-    "الشيخ زايد": ["الحي الثالث", "هايبر وان", "الحي السادس عشر", "زايد 2000"],
-  },
-  "القاهرة الجديدة": {
-    التجمع: ["التسعين الشمالي", "التسعين الجنوبي", "البنفسج", "الياسمين"],
-    الرحاب: ["السوق الشرقي", "بوابة 6", "بوابة 13", "المول"],
-  },
-} as const;
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export const defaultAddress: AddressDraft = {
   city: "",
@@ -202,6 +217,16 @@ export const defaultAddress: AddressDraft = {
   apartment: "",
   apartmentNumber: "",
 };
+
+export const defaultDeliveryAreas: Record<string, string[]> = {
+  الدقهلية: ["شربين", "بلقاس", "المنصورة", "طلخا", "ميت غمر", "أجا", "السنبلاوين", "منية النصر"],
+};
+
+export const contactNumbers = [
+  "01080644406",
+  "01090706444",
+  "0502802862",
+];
 
 export function currency(value: number) {
   return `${value.toLocaleString("ar-EG")} جنيه`;

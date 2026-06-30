@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import { AmbientEnergy } from "@/components/layout/ambient-energy";
 import LeafletLocationMap from "@/components/map/dynamic-location-map";
 import { getCartLineKey, useStorefront } from "@/context/storefront-context";
-import { addressBook, branches, currency } from "@/data/storefront";
+import { defaultDeliveryAreas, branches, currency } from "@/data/storefront";
 
 type Step = 1 | 2 | 3;
 
@@ -29,16 +29,10 @@ export default function CheckoutPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
 
-  const cityNames = Object.keys(addressBook);
+  const cityNames = Object.keys(defaultDeliveryAreas);
   const areas = checkout.address.city
-    ? Object.keys(addressBook[checkout.address.city as keyof typeof addressBook] ?? {})
+    ? defaultDeliveryAreas[checkout.address.city] ?? []
     : [];
-  const neighborhoods =
-    checkout.address.city && checkout.address.area
-      ? (addressBook[checkout.address.city as keyof typeof addressBook]?.[
-          checkout.address.area as never
-        ] as readonly string[] | undefined) ?? []
-      : [];
 
   const step1Errors = useMemo(() => {
     const errors: string[] = [];
@@ -51,9 +45,8 @@ export default function CheckoutPage() {
   const step2Errors = useMemo(() => {
     const errors: string[] = [];
     if (checkout.orderType === "delivery") {
-      if (!checkout.address.city) errors.push("اختر المدينة.");
-      if (!checkout.address.area) errors.push("اختر المنطقة.");
-      if (!checkout.address.neighborhood) errors.push("اختر الحي.");
+      if (!checkout.address.city) errors.push("اختر المحافظة.");
+      if (!checkout.address.area) errors.push("اختر المدينة / المركز.");
       if (!checkout.address.street.trim()) errors.push("اكتب اسم الشارع.");
       if (!checkout.location) errors.push("حدد موقعك على الخريطة أو استخدم GPS.");
     }
@@ -73,7 +66,7 @@ export default function CheckoutPage() {
   function confirmOrder() {
     const order = submitOrder();
     setReviewOpen(false);
-    router.push(`/order-confirmation?id=${order.id}`);
+    router.push("/checkout/success");
   }
 
   return (
@@ -164,7 +157,7 @@ export default function CheckoutPage() {
                 <div className="grid gap-5">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <SelectField
-                      label="المدينة *"
+                      label="المحافظة *"
                       value={checkout.address.city}
                       options={cityNames}
                       onChange={(v) =>
@@ -174,7 +167,7 @@ export default function CheckoutPage() {
                       }
                     />
                     <SelectField
-                      label="المنطقة *"
+                      label="المدينة / المركز *"
                       value={checkout.address.area}
                       options={areas}
                       onChange={(v) =>
@@ -184,12 +177,10 @@ export default function CheckoutPage() {
                       }
                       disabled={!checkout.address.city}
                     />
-                    <SelectField
-                      label="الحي *"
+                    <TextField
+                      label="الحي / القرية"
                       value={checkout.address.neighborhood}
-                      options={[...neighborhoods]}
                       onChange={(v) => updateAddress({ neighborhood: v })}
-                      disabled={!checkout.address.area}
                     />
                     <TextField
                       label="اسم الشارع *"

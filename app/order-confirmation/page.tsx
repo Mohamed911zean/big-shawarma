@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { CheckCircle, ClipboardList, Menu } from "lucide-react";
 import { Suspense } from "react";
 import { useStorefront } from "@/context/storefront-context";
@@ -27,11 +27,11 @@ function ConfirmationContent() {
       ? `استلام من ${order.branch.name}`
       : null;
 
-  const container = {
+  const container: Variants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.12 } },
   };
-  const item = {
+  const item: Variants = {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0, transition: { type: "spring", damping: 18 } },
   };

@@ -6,10 +6,12 @@ import { motion } from "framer-motion";
 import { Flame, MapPin, Menu, ShoppingCart, Star } from "lucide-react";
 import { AmbientEnergy } from "@/components/layout/ambient-energy";
 import { SectionTitle } from "@/components/layout/section-title";
-import MenuExperience from "@/components/menu/menu-experience";
+import MenuCarousel from "@/components/menu/menu-experience";
 import { useStorefront } from "@/context/storefront-context";
 import { currency, menuItems, branches } from "@/data/storefront";
 import Navbar from "@/components/layout/navbar";
+import { ArrowDown, ArrowLeft } from "lucide-react";
+import React from "react";
 
 const bestsellerIds = ["sh2", "m6", "tr4"];
 
@@ -162,60 +164,33 @@ export default function Home() {
 
       {/* ─── Compact Menu ─────────────────────────────────────────────── */}
       <div id="menu" className="scroll-mt-20">
-        <MenuExperience compact />
+        <MenuCarousel  />
       </div>
 
-      {/* ─── Checkout CTA ─────────────────────────────────────────────── */}
-      <section className="bg-[#E11D48] px-5 py-20 md:px-8">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[1fr_0.8fr]">
-          <div>
-            <p className="mb-4 inline-flex rounded-br-[18px] rounded-tl-[18px] bg-black px-4 py-2 text-sm font-black text-[#FFB800]">
-              طلب بدون واتساب
-            </p>
-            <h2 className="text-5xl font-black leading-tight">
-              طلبك في ثلاث خطوات وبياناتك محفوظة
-            </h2>
-            <p className="mt-5 text-xl font-bold leading-9 text-white/80">
-              اختار التوصيل أو الاستلام، حدد موقعك، وأكد طلبك في ثواني.
-            </p>
-          </div>
-          <Link
-            href="/checkout"
-            className="inline-flex items-center justify-center gap-3 rounded-bl-[34px] rounded-tr-[34px] bg-[#25D366] px-8 py-5 text-xl font-black text-black shadow-[8px_8px_0_#FFB800]"
-          >
-            <ShoppingCart />
-            ابدأ الطلب الآن
-          </Link>
-        </div>
-      </section>
+     
 
       {/* ─── Branches strip ───────────────────────────────────────────── */}
-      <section id="branches" className="scroll-mt-20 bg-[#111] px-5 py-20 md:px-8">
-        <SectionTitle kicker="فروعنا" title="٤ فروع، كل القاهرة والجيزة" />
-        <div className="mx-auto mt-10 max-w-7xl">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {branches.map((branch) => (
-              <div
-                key={branch.id}
-                className="rounded-bl-[28px] rounded-tr-[28px] border border-white/15 bg-white/5 p-5"
-              >
-                <p className="text-xs font-black text-[#FFB800]">{branch.area}</p>
-                <h3 className="mt-2 text-xl font-black">{branch.name}</h3>
-                <p className="mt-2 text-sm font-bold text-[#9CA3AF]">{branch.hours}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link
-              href="/branches"
-              className="inline-flex items-center gap-2 rounded-bl-[22px] rounded-tr-[22px] border-2 border-[#FFB800] bg-transparent px-6 py-3 font-black text-[#FFB800] transition hover:bg-[#FFB800] hover:text-black"
-            >
-              <MapPin size={18} />
-              عرض الخريطة الكاملة ←
-            </Link>
-          </div>
-        </div>
-      </section>
+     <div className="flex flex-col items-center gap-4 md:flex-row md:justify-center">
+  {branches.map((branch, index) => (
+    <React.Fragment key={branch.id}>
+      <div className="w-full max-w-sm rounded-bl-[28px] rounded-tr-[28px] border border-white/15 bg-white/5 p-5">
+        <p className="text-xs font-black text-[#FFB800]">{branch.area}</p>
+        <h3 className="mt-2 text-xl font-black">{branch.name}</h3>
+        <p className="mt-2 text-sm font-bold text-[#9CA3AF]">{branch.hours}</p>
+      </div>
+
+      {index !== branches.length - 1 && (
+        <>
+          {/* Mobile */}
+          <ArrowDown className="text-[#FFB800] md:hidden" size={34} />
+
+          {/* Desktop */}
+          <ArrowLeft className="hidden text-[#FFB800] md:block" size={34} />
+        </>
+      )}
+    </React.Fragment>
+  ))}
+</div>
     </main>
   );
 }
