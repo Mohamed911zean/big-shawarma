@@ -45,7 +45,7 @@ export default function CartDrawer({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[90] bg-black/65 backdrop-blur-md"
+          className="fixed inset-0 z-[2000] bg-black/65 backdrop-blur-md"
         >
           <motion.div
             initial={{ x: "100%" }}

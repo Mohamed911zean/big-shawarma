@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   description: "منيو تفاعلي وشوكيس بصري لمطعم Big Shawerma بطابع بوب آرت سريع وجريء.",
 };
 
+<link
+    rel="preload"
+    as="image"
+    href="/navbar-logo-with-no-bg.webp"
+/>
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className="scroll-smooth antialiased">
