@@ -27,7 +27,6 @@ export default function WishlistPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <Navbar />
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pt-32 pb-24 md:px-8">
         {/* Header */}

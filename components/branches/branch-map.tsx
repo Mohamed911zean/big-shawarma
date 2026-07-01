@@ -5,7 +5,7 @@ import { Bike, ChefHat, Clock3, Navigation, Phone } from "lucide-react";
 import { branches } from "../../data/storefront";
 import LeafletLocationMap from "../map/dynamic-location-map";
 
-export function BranchMap() {
+export default function BranchMap() {
   const [activeBranchId, setActiveBranchId] = useState(branches[0].id);
   const activeBranch = branches.find((branch) => branch.id === activeBranchId) ?? branches[0];
 

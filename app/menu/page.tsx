@@ -18,39 +18,9 @@ import { AmbientEnergy } from "@/components/layout/ambient-energy";
 import Navbar from "@/components/layout/navbar";
 import { ProductModal } from "@/components/menu/product-modal";
 import Image from "next/image"
+import Randomizer from "@/components/ui/floating-randomizer"
 
-// ─── Randomizer ───────────────────────────────────────────────────────────────
 
-function FloatingRandomizer({ onRandomize }: { onRandomize: (item: MenuItem) => void }) {
-  const [spinning, setSpinning] = useState(false);
-
-  function handleSpin() {
-    if (spinning) return;
-    setSpinning(true);
-    setTimeout(() => {
-      const random = menuItems[Math.floor(Math.random() * menuItems.length)];
-      onRandomize(random);
-      setSpinning(false);
-    }, 700);
-  }
-
-  return (
-    <motion.button
-      onClick={handleSpin}
-      whileTap={{ scale: 0.92 }}
-      title="اختيار عشوائي"
-      className="fixed bottom-24 left-5 z-40 flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#FFB800] bg-[#111] text-2xl shadow-[4px_4px_0_#E11D48] transition-all hover:bg-[#FFB800] lg:bottom-6"
-      style={{ WebkitTapHighlightColor: "transparent" }}
-    >
-      <motion.span
-        animate={spinning ? { rotate: 360 } : { rotate: 0 }}
-        transition={spinning ? { duration: 0.7, ease: "easeInOut" } : {}}
-      >
-        🎲
-      </motion.span>
-    </motion.button>
-  );
-}
 
 // ─── Menu Card ────────────────────────────────────────────────────────────────
 
@@ -252,14 +222,13 @@ export default function MenuPage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#0D0D0D] pb-36 text-white">
       <AmbientEnergy />
-      <Navbar />
 
       <div className="relative z-10 mx-auto max-w-6xl px-4 pt-32 md:px-8">
 
         {/* ── Title ── */}
         <div className="mb-10 text-center">
           <p className="mb-3 inline-flex items-center gap-2 rounded-br-[18px] rounded-tl-[18px] border-2 border-[#FFB800] bg-[#111] px-4 py-2 text-sm font-black text-[#FFB800]">
-            🌯 قائمة الأكل
+             قائمة الأكل
           </p>
           <h1 className="text-4xl font-black text-white sm:text-5xl">
             المنيو <span className="text-[#FFB800]">كامل</span>
@@ -416,7 +385,8 @@ export default function MenuPage() {
       </div>
 
       {/* ── Floating Randomizer ── */}
-      <FloatingRandomizer onRandomize={(item) => openModal(item)} />
+            <Randomizer/>
+
 
       {/* ── Sticky Checkout Bar ── */}
       <AnimatePresence>

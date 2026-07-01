@@ -8,6 +8,7 @@ import Footer from "@/components/layout/footer";
 import { GlobalCart } from "@/components/layout/cartDrawer";
 import FloatingChatbot from "@/components/ui/floating-chatbot";
 import FloatingRandomizer from "@/components/ui/floating-randomizer";
+import PageLoader from "@/components/layout/PageLoader";
 
 export const metadata: Metadata = {
   title: "Big Shawerma | أكبر من مجرد شاورما",
@@ -20,15 +21,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <StorefrontProvider>
           <ToastProvider>
+            <PageLoader />
             <Navbar />
-            {/* pb-20 عشان المحتوى ميتغطاش بالـ bottom bar على موبايل */}
             <main className="min-h-screen pb-20 md:pb-0">
               {children}
             </main>
             <Footer />
             <BottomNav />
             <GlobalCart />
-            <FloatingRandomizer />
           </ToastProvider>
         </StorefrontProvider>
       </body>

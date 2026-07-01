@@ -12,6 +12,7 @@ import { currency, menuItems, branches } from "@/data/storefront";
 import Navbar from "@/components/layout/navbar";
 import { ArrowDown, ArrowLeft } from "lucide-react";
 import React from "react";
+import BranchesMap from "@/components/branches/branch-map"
 
 const bestsellerIds = ["sh2", "m6", "tr4"];
 
@@ -171,25 +172,7 @@ export default function Home() {
       {/* ─── Branches strip ───────────────────────────────────────────── */}
      <div className="flex flex-col items-center gap-4 md:flex-row md:justify-center">
       <h1 className="max-w-3xl text-balance text-6xl font-black leading-[0.95] text-white sm:text-7xl lg:text-8xl mt-10 mb-10">فروعنا </h1>
-  {branches.map((branch, index) => (
-    <React.Fragment key={branch.id}>
-      <div className="w-full max-w-sm rounded-bl-[28px] rounded-tr-[28px] border border-white/15 bg-white/5 p-5">
-        <p className="text-xs font-black text-[#FFB800]">{branch.area}</p>
-        <h3 className="mt-2 text-xl font-black">{branch.name}</h3>
-        <p className="mt-2 text-sm font-bold text-[#9CA3AF]">{branch.hours}</p>
-      </div>
-
-      {index !== branches.length - 1 && (
-        <>
-          {/* Mobile */}
-          <ArrowDown className="text-[#FFB800] md:hidden" size={34} />
-
-          {/* Desktop */}
-          <ArrowLeft className="hidden text-[#FFB800] md:block" size={34} />
-        </>
-      )}
-    </React.Fragment>
-  ))}
+  <BranchesMap/>
 </div>
     </main>
   );

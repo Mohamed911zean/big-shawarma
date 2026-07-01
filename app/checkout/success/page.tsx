@@ -53,7 +53,6 @@ export default function CheckoutSuccessPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#0D0D0D] text-white">
       <AmbientEnergy />
-      <Navbar />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 pb-24 pt-32">
         {/* Success Header */}

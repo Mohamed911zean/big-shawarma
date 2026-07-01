@@ -27,7 +27,7 @@ export default function BottomNav() {
                  flex items-center justify-around
                  bg-[#111111]/95 backdrop-blur-xl
                  border-t border-white/[0.06]
-                 px-2 pb-5 pt-2"
+                 px-2 pb-5 pt-2 z-[999]"
     >
       {navItems.map(({ href, icon: Icon, label, hasOrders }) => {
         const isActive =

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, ShoppingCart, Dices } from "lucide-react";
 import { menuItems, currency } from "@/data/storefront";
 import { useStorefront } from "@/context/storefront-context";
+import Image from "next/image"
 
 export default function FloatingRandomizer() {
   const { randomizerOpen, setRandomizerOpen, addToCart } = useStorefront();
@@ -133,7 +134,7 @@ export default function FloatingRandomizer() {
                 }`}
               >
                 <div className="flex items-center justify-center h-32 mb-4">
-                  <span className="text-7xl">🍔</span>
+                  <Image src="/hero-section-cool-img-with-no-bg.png" alt="bg-image" width={150} height={150} className="object-contain" />
                 </div>
                 <h3 className="text-xl font-black">{selected.name}</h3>
                 <p className="mt-2 min-h-[40px] text-sm font-bold text-[#9CA3AF] line-clamp-2">

@@ -121,6 +121,7 @@ export default function CheckoutPage() {
                   label="اسم العميل *"
                   value={checkout.name}
                   onChange={(v) => updateCheckout({ name: v })}
+                  
                 />
                 <TextField
                   label="رقم الموبايل *"
@@ -562,7 +563,7 @@ function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         inputMode={inputMode}
-        className="rounded-bl-[22px] rounded-tr-[22px] border border-white/15 bg-white/5 px-5 py-4 font-bold outline-none placeholder:text-[#9CA3AF] focus:border-[#FFB800]"
+        className="rounded-bl-[22px] rounded-tr-[22px] border w-full border-white/15 bg-white/5 px-5 py-4 font-bold outline-none placeholder:text-[#9CA3AF] focus:border-[#FFB800]"
       />
     </label>
   );

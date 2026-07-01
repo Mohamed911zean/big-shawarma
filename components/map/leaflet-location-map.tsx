@@ -16,7 +16,10 @@ type LocationMapProps = {
   mode?: "delivery" | "branches";
 };
 
-const center: [number, number] = [30.0444, 31.2357];
+const center: [number, number] = [
+  31.2065,
+  31.4405,
+];
 
 function makeIcon(color: string, label: string) {
   return L.divIcon({
